@@ -1,0 +1,48 @@
+services:
+  sql-dev:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql-dev
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+    ports:
+      - "14331:1433"
+    networks:
+      - db-cicd-net
+
+  sql-qa:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql-qa
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+    ports:
+      - "14332:1433"
+    networks:
+      - db-cicd-net
+
+  sql-staging:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql-staging
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+    ports:
+      - "14333:1433"
+    networks:
+      - db-cicd-net
+
+  sql-prod:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql-prod
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+    ports:
+      - "14334:1433"
+    networks:
+      - db-cicd-net
+
+networks:
+  db-cicd-net:
+    name: db-cicd-net

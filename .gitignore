@@ -1,0 +1,26 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+**/bin/
+**/obj/
+
+# SSDT / Database project local artifacts
+**/Import Schema Logs/
+*.sqlproj.user
+
+# VS solution filters / cache
+*.slnx
+
+# Copilot / local DB/cache artifacts (seen in your .vs folder)
+*.db
+*.db-shm
+*.db-wal
+
+# OS
+Thumbs.db
+.DS_Store
