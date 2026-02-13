@@ -1,31 +1,15 @@
-trigger:
-- main
+trigger: none
 
 pool:
-  vmImage: 'windows-latest'
-
-variables:
-  buildConfiguration: 'Release'
-  sqlprojPath: 'database/AppDb.Database/AppDb.Database.sqlproj'
+  name: pool-local-docker
 
 steps:
-- task: VSBuild@1
-  displayName: 'Build SQL Database Project (SSDT) -> DACPAC'
-  inputs:
-    solution: '$(sqlprojPath)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '/p:NetFxTooling=true'
-    platform: 'Any CPU'
-
-- task: CopyFiles@2
-  displayName: 'Copy DACPAC to artifact staging directory'
-  inputs:
-    SourceFolder: 'database/AppDb.Database/bin/$(buildConfiguration)'
-    Contents: '**/*.dacpac'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish DACPAC artifact'
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'dacpac'
+- powershell: |
+    Write-Host "Running on self-hosted agent..."
+    Write-Host "Machine:"
+    hostname
+    Write-Host "WhoAmI:"
+    whoami
+    Write-Host "Docker version:"
+    docker version
+  displayName: "Test self-hosted agent + docker"
