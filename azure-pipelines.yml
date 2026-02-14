@@ -183,7 +183,7 @@ stages:
 # =====================================================
 - stage: Drift_QA
   displayName: "Drift Detection (QA vs DACPAC)"
-  dependsOn: Drift_QA
+  dependsOn: Deploy_QA
   jobs:
   - job: DriftCheckQa
     displayName: "Detect drift in QA"
