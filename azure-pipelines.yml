@@ -75,7 +75,7 @@ stages:
                 /TargetPassword:"$env:SQL_SA_PASSWORD" `
                 /TargetEncryptConnection:True `
                 /TargetTrustServerCertificate:True `
-                /OutputPath:"$reportPath"
+                /OutputPath:"$reportPath" `
                 /Action:Publish `
                 /SourceFile:"$($dacpac.FullName)" `
                 /TargetServerName:"$(DevServer)" `
