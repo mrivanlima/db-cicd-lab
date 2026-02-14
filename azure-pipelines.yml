@@ -130,6 +130,22 @@ stages:
               $dacpac = Get-ChildItem "$(Pipeline.Workspace)\drop" -Recurse -Filter "*.dacpac" | Select-Object -First 1
               if (-not $dacpac) { throw "No .dacpac found in artifact." }
 
+              # 1) Deploy report
+              $reportPath = "$(Pipeline.Workspace)\deploy-report-qa.xml"
+
+              SqlPackage `
+                /Action:DeployReport `
+                /SourceFile:"$($dacpac.FullName)" `
+                /TargetServerName:"$(QaServer)" `
+                /TargetDatabaseName:"$(TargetDatabaseName)" `
+                /TargetUser:"$(SqlUser)" `
+                /TargetPassword:"$env:SQL_SA_PASSWORD" `
+                /TargetEncryptConnection:True `
+                /TargetTrustServerCertificate:True `
+                /OutputPath:"$reportPath"
+
+              Write-Host "Deploy report generated: $reportPath"
+
               SqlPackage `
                 /Action:Publish `
                 /SourceFile:"$($dacpac.FullName)" `
@@ -144,6 +160,12 @@ stages:
             displayName: "Deploy QA (Safe Mode)"
             env:
               SQL_SA_PASSWORD: $(SQL_SA_PASSWORD)
+
+          - task: PublishPipelineArtifact@1
+            displayName: "Publish QA deploy report"
+            inputs:
+              targetPath: "$(Pipeline.Workspace)/deploy-report-qa.xml"
+              artifact: "deploy-report-qa"
 
 # =====================================================
 # DEPLOY STAGING
@@ -168,6 +190,22 @@ stages:
               $dacpac = Get-ChildItem "$(Pipeline.Workspace)\drop" -Recurse -Filter "*.dacpac" | Select-Object -First 1
               if (-not $dacpac) { throw "No .dacpac found in artifact." }
 
+              # 1) Deploy report
+              $reportPath = "$(Pipeline.Workspace)\deploy-report-staging.xml"
+
+              SqlPackage `
+                /Action:DeployReport `
+                /SourceFile:"$($dacpac.FullName)" `
+                /TargetServerName:"$(StagingServer)" `
+                /TargetDatabaseName:"$(TargetDatabaseName)" `
+                /TargetUser:"$(SqlUser)" `
+                /TargetPassword:"$env:SQL_SA_PASSWORD" `
+                /TargetEncryptConnection:True `
+                /TargetTrustServerCertificate:True `
+                /OutputPath:"$reportPath"
+
+              Write-Host "Deploy report generated: $reportPath"
+
               SqlPackage `
                 /Action:Publish `
                 /SourceFile:"$($dacpac.FullName)" `
@@ -182,6 +220,12 @@ stages:
             displayName: "Deploy Staging (Safe Mode)"
             env:
               SQL_SA_PASSWORD: $(SQL_SA_PASSWORD)
+
+          - task: PublishPipelineArtifact@1
+            displayName: "Publish Staging deploy report"
+            inputs:
+              targetPath: "$(Pipeline.Workspace)/deploy-report-staging.xml"
+              artifact: "deploy-report-staging"
 
 # =====================================================
 # DEPLOY PROD
@@ -206,6 +250,19 @@ stages:
               $dacpac = Get-ChildItem "$(Pipeline.Workspace)\drop" -Recurse -Filter "*.dacpac" | Select-Object -First 1
               if (-not $dacpac) { throw "No .dacpac found in artifact." }
 
+              # 1) Deploy report
+              $reportPath = "$(Pipeline.Workspace)\deploy-report-prod.xml"
+              SqlPackage `
+                /Action:DeployReport `
+                /SourceFile:"$($dacpac.FullName)" `
+                /TargetServerName:"$(ProdServer)" `
+                /TargetDatabaseName:"$(TargetDatabaseName)" `
+                /TargetUser:"$(SqlUser)" `
+                /TargetPassword:"$env:SQL_SA_PASSWORD" `
+                /TargetEncryptConnection:True `
+                /TargetTrustServerCertificate:True `
+                /OutputPath:"$reportPath"
+
               SqlPackage `
                 /Action:Publish `
                 /SourceFile:"$($dacpac.FullName)" `
@@ -220,3 +277,9 @@ stages:
             displayName: "Deploy Prod (Safe Mode)"
             env:
               SQL_SA_PASSWORD: $(SQL_SA_PASSWORD)
+
+          - task: PublishPipelineArtifact@1
+            displayName: "Publish Prod deploy report"
+            inputs:
+              targetPath: "$(Pipeline.Workspace)/deploy-report-prod.xml"
+              artifact: "deploy-report-prod"
