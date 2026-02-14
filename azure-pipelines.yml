@@ -72,7 +72,9 @@ stages:
                 /TargetUser:"$(SqlUser)" `
                 /TargetPassword:"$env:SQL_SA_PASSWORD" `
                 /p:BlockOnPossibleDataLoss=True `
-                /p:VerifyDeployment=True
+                /p:VerifyDeployment=True 
+                /p:Encrypt=True `
+                /p:TrustServerCertificate=True
             displayName: "Deploy Dev (Safe Mode)"
 
 # =====================================================
@@ -106,7 +108,9 @@ stages:
                 /TargetUser:"$(SqlUser)" `
                 /TargetPassword:"$env:SQL_SA_PASSWORD" `
                 /p:BlockOnPossibleDataLoss=True `
-                /p:VerifyDeployment=True
+                /p:VerifyDeployment=True `
+                /p:Encrypt=True `
+                /p:TrustServerCertificate=True
             displayName: "Deploy QA (Safe Mode)"
 
 # =====================================================
@@ -140,7 +144,9 @@ stages:
                 /TargetUser:"$(SqlUser)" `
                 /TargetPassword:"$env:SQL_SA_PASSWORD" `
                 /p:BlockOnPossibleDataLoss=True `
-                /p:VerifyDeployment=True
+                /p:VerifyDeployment=True `
+                /p:Encrypt=True `
+                /p:TrustServerCertificate=True
             displayName: "Deploy Staging (Safe Mode)"
 
 # =====================================================
@@ -174,5 +180,7 @@ stages:
                 /TargetUser:"$(SqlUser)" `
                 /TargetPassword:"$env:SQL_SA_PASSWORD" `
                 /p:BlockOnPossibleDataLoss=True `
-                /p:VerifyDeployment=True
+                /p:VerifyDeployment=True `
+                /p:Encrypt=True `
+                /p:TrustServerCertificate=True
             displayName: "Deploy Prod (Safe Mode)"
