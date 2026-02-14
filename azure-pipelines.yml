@@ -10,7 +10,7 @@ variables:
   ProdServer: "localhost,14334"
 
   SqlUser: "sa"
-  SqlPassword: "$(SQL_SA_PASSWORD)"
+  #SqlPassword: "$(SQL_SA_PASSWORD)"
 
 stages:
 
@@ -70,7 +70,7 @@ stages:
                 /TargetServerName:"$(DevServer)" `
                 /TargetDatabaseName:"$(TargetDatabaseName)" `
                 /TargetUser:"$(SqlUser)" `
-                /TargetPassword:"$(SqlPassword)" `
+                /TargetPassword:"$env:SQL_SA_PASSWORD" `
                 /p:BlockOnPossibleDataLoss=True `
                 /p:VerifyDeployment=True
             displayName: "Deploy Dev (Safe Mode)"
@@ -104,7 +104,7 @@ stages:
                 /TargetServerName:"$(QaServer)" `
                 /TargetDatabaseName:"$(TargetDatabaseName)" `
                 /TargetUser:"$(SqlUser)" `
-                /TargetPassword:"$(SqlPassword)" `
+                /TargetPassword:"$env:SQL_SA_PASSWORD" `
                 /p:BlockOnPossibleDataLoss=True `
                 /p:VerifyDeployment=True
             displayName: "Deploy QA (Safe Mode)"
@@ -138,7 +138,7 @@ stages:
                 /TargetServerName:"$(StagingServer)" `
                 /TargetDatabaseName:"$(TargetDatabaseName)" `
                 /TargetUser:"$(SqlUser)" `
-                /TargetPassword:"$(SqlPassword)" `
+                /TargetPassword:"$env:SQL_SA_PASSWORD" `
                 /p:BlockOnPossibleDataLoss=True `
                 /p:VerifyDeployment=True
             displayName: "Deploy Staging (Safe Mode)"
@@ -172,7 +172,7 @@ stages:
                 /TargetServerName:"$(ProdServer)" `
                 /TargetDatabaseName:"$(TargetDatabaseName)" `
                 /TargetUser:"$(SqlUser)" `
-                /TargetPassword:"$(SqlPassword)" `
+                /TargetPassword:"$env:SQL_SA_PASSWORD" `
                 /p:BlockOnPossibleDataLoss=True `
                 /p:VerifyDeployment=True
             displayName: "Deploy Prod (Safe Mode)"
