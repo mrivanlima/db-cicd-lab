@@ -1,15 +1,178 @@
-trigger: none
+trigger:
+- main
 
-pool:
-  name: pool-local-docker
+variables:
+  TargetDatabaseName: "AppDb"
 
-steps:
-- powershell: |
-    Write-Host "Running on self-hosted agent..."
-    Write-Host "Machine:"
-    hostname
-    Write-Host "WhoAmI:"
-    whoami
-    Write-Host "Docker version:"
-    docker version
-  displayName: "Test self-hosted agent + docker"
+  DevServer: "localhost,14331"
+  QaServer: "localhost,14332"
+  StagingServer: "localhost,14333"
+  ProdServer: "localhost,14334"
+
+  SqlUser: "sa"
+  SqlPassword: "$(SQL_SA_PASSWORD)"
+
+stages:
+
+# =====================================================
+# BUILD STAGE
+# =====================================================
+- stage: Build
+  displayName: "Build DACPAC"
+  jobs:
+  - job: BuildDacpac
+    displayName: "Compile SQL Database Project"
+    pool:
+      name: pool-local-docker
+    steps:
+    - checkout: self
+
+    - task: VSBuild@1
+      displayName: "Build SQL Project (.sqlproj)"
+      inputs:
+        solution: "database/**/*.sqlproj"
+        vsVersion: "latest"
+        configuration: "Release"
+
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish DACPAC Artifact"
+      inputs:
+        PathtoPublish: "database"
+        ArtifactName: "drop"
+        publishLocation: "Container"
+
+# =====================================================
+# DEPLOY DEV
+# =====================================================
+- stage: Deploy_Dev
+  displayName: "Deploy to Dev"
+  dependsOn: Build
+  jobs:
+  - deployment: DeployDev
+    displayName: "Publish DACPAC to Dev"
+    environment: dev
+    pool:
+      name: pool-local-docker
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+
+          - powershell: |
+              $dacpac = Get-ChildItem "$(Pipeline.Workspace)\drop" -Recurse -Filter "*.dacpac" | Select-Object -First 1
+              if (-not $dacpac) { throw "No .dacpac found in artifact." }
+
+              SqlPackage `
+                /Action:Publish `
+                /SourceFile:"$($dacpac.FullName)" `
+                /TargetServerName:"$(DevServer)" `
+                /TargetDatabaseName:"$(TargetDatabaseName)" `
+                /TargetUser:"$(SqlUser)" `
+                /TargetPassword:"$(SqlPassword)" `
+                /p:BlockOnPossibleDataLoss=True `
+                /p:VerifyDeployment=True
+            displayName: "Deploy Dev (Safe Mode)"
+
+# =====================================================
+# DEPLOY QA
+# =====================================================
+- stage: Deploy_QA
+  displayName: "Deploy to QA"
+  dependsOn: Deploy_Dev
+  jobs:
+  - deployment: DeployQa
+    displayName: "Publish DACPAC to QA"
+    environment: qa
+    pool:
+      name: pool-local-docker
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+
+          - powershell: |
+              $dacpac = Get-ChildItem "$(Pipeline.Workspace)\drop" -Recurse -Filter "*.dacpac" | Select-Object -First 1
+              if (-not $dacpac) { throw "No .dacpac found in artifact." }
+
+              SqlPackage `
+                /Action:Publish `
+                /SourceFile:"$($dacpac.FullName)" `
+                /TargetServerName:"$(QaServer)" `
+                /TargetDatabaseName:"$(TargetDatabaseName)" `
+                /TargetUser:"$(SqlUser)" `
+                /TargetPassword:"$(SqlPassword)" `
+                /p:BlockOnPossibleDataLoss=True `
+                /p:VerifyDeployment=True
+            displayName: "Deploy QA (Safe Mode)"
+
+# =====================================================
+# DEPLOY STAGING
+# =====================================================
+- stage: Deploy_Staging
+  displayName: "Deploy to Staging"
+  dependsOn: Deploy_QA
+  jobs:
+  - deployment: DeployStaging
+    displayName: "Publish DACPAC to Staging"
+    environment: staging
+    pool:
+      name: pool-local-docker
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+
+          - powershell: |
+              $dacpac = Get-ChildItem "$(Pipeline.Workspace)\drop" -Recurse -Filter "*.dacpac" | Select-Object -First 1
+              if (-not $dacpac) { throw "No .dacpac found in artifact." }
+
+              SqlPackage `
+                /Action:Publish `
+                /SourceFile:"$($dacpac.FullName)" `
+                /TargetServerName:"$(StagingServer)" `
+                /TargetDatabaseName:"$(TargetDatabaseName)" `
+                /TargetUser:"$(SqlUser)" `
+                /TargetPassword:"$(SqlPassword)" `
+                /p:BlockOnPossibleDataLoss=True `
+                /p:VerifyDeployment=True
+            displayName: "Deploy Staging (Safe Mode)"
+
+# =====================================================
+# DEPLOY PROD
+# =====================================================
+- stage: Deploy_Prod
+  displayName: "Deploy to Prod"
+  dependsOn: Deploy_Staging
+  jobs:
+  - deployment: DeployProd
+    displayName: "Publish DACPAC to Prod"
+    environment: prod
+    pool:
+      name: pool-local-docker
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+
+          - powershell: |
+              $dacpac = Get-ChildItem "$(Pipeline.Workspace)\drop" -Recurse -Filter "*.dacpac" | Select-Object -First 1
+              if (-not $dacpac) { throw "No .dacpac found in artifact." }
+
+              SqlPackage `
+                /Action:Publish `
+                /SourceFile:"$($dacpac.FullName)" `
+                /TargetServerName:"$(ProdServer)" `
+                /TargetDatabaseName:"$(TargetDatabaseName)" `
+                /TargetUser:"$(SqlUser)" `
+                /TargetPassword:"$(SqlPassword)" `
+                /p:BlockOnPossibleDataLoss=True `
+                /p:VerifyDeployment=True
+            displayName: "Deploy Prod (Safe Mode)"
