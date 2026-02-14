@@ -10,7 +10,6 @@ variables:
   ProdServer: "localhost,14334"
 
   SqlUser: "sa"
-  #SqlPassword: "$(SQL_SA_PASSWORD)"
 
 stages:
 
@@ -99,6 +98,14 @@ stages:
                 /p:BlockOnPossibleDataLoss=True `
                 /p:VerifyDeployment=True
             displayName: "Deploy Dev (Safe Mode)"
+            env:
+              SQL_SA_PASSWORD: $(SQL_SA_PASSWORD)
+
+          - task: PublishPipelineArtifact@1
+            displayName: "Publish Dev deploy report"
+            inputs:
+              targetPath: "$(Pipeline.Workspace)/deploy-report-dev.xml"
+              artifact: "deploy-report-dev"
 
 # =====================================================
 # DEPLOY QA
@@ -135,6 +142,8 @@ stages:
                 /p:BlockOnPossibleDataLoss=True `
                 /p:VerifyDeployment=True
             displayName: "Deploy QA (Safe Mode)"
+            env:
+              SQL_SA_PASSWORD: $(SQL_SA_PASSWORD)
 
 # =====================================================
 # DEPLOY STAGING
@@ -171,6 +180,8 @@ stages:
                 /p:BlockOnPossibleDataLoss=True `
                 /p:VerifyDeployment=True
             displayName: "Deploy Staging (Safe Mode)"
+            env:
+              SQL_SA_PASSWORD: $(SQL_SA_PASSWORD)
 
 # =====================================================
 # DEPLOY PROD
@@ -207,3 +218,5 @@ stages:
                 /p:BlockOnPossibleDataLoss=True `
                 /p:VerifyDeployment=True
             displayName: "Deploy Prod (Safe Mode)"
+            env:
+              SQL_SA_PASSWORD: $(SQL_SA_PASSWORD)
