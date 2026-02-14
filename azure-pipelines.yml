@@ -168,6 +168,63 @@ stages:
               artifact: "deploy-report-qa"
 
 # =====================================================
+# DRIFT DETECTION (QA)
+# =====================================================
+- stage: Drift_QA
+  displayName: "Drift Detection (QA vs DACPAC)"
+  dependsOn: Deploy_QA
+  jobs:
+  - job: DriftCheckQa
+    displayName: "Detect drift in QA"
+    pool:
+      name: pool-local-docker
+    steps:
+    - download: current
+      artifact: drop
+
+    - powershell: |
+        $dacpac = Get-ChildItem "$(Pipeline.Workspace)\drop" -Recurse -Filter "*.dacpac" | Select-Object -First 1
+        if (-not $dacpac) { throw "No .dacpac found in artifact." }
+
+        $reportPath = "$(Pipeline.Workspace)\drift-report-qa.xml"
+
+        # DeployReport generates the diff between desired (DACPAC) and current (QA DB)
+        SqlPackage `
+          /Action:DeployReport `
+          /SourceFile:"$($dacpac.FullName)" `
+          /TargetServerName:"$(QaServer)" `
+          /TargetDatabaseName:"$(TargetDatabaseName)" `
+          /TargetUser:"$(SqlUser)" `
+          /TargetPassword:"$env:SQL_SA_PASSWORD" `
+          /TargetEncryptConnection:True `
+          /TargetTrustServerCertificate:True `
+          /OutputPath:"$reportPath"
+
+        if (-not (Test-Path $reportPath)) { throw "Drift report not generated." }
+
+        # If there are operations in the report, drift exists
+        $xml = [xml](Get-Content $reportPath)
+        $ops = $xml.DeploymentReport.Operations.Operation
+
+        if ($null -ne $ops) {
+          Write-Host "DRIFT DETECTED in QA. See drift report: $reportPath"
+          throw "Drift detected in QA. Pipeline blocked."
+        }
+
+        Write-Host "No drift detected in QA."
+      displayName: "Drift check (QA)"
+      env:
+        SQL_SA_PASSWORD: $(SQL_SA_PASSWORD)
+
+    - task: PublishPipelineArtifact@1
+      displayName: "Publish QA drift report"
+      inputs:
+        targetPath: "$(Pipeline.Workspace)/drift-report-qa.xml"
+        artifact: "drift-report-qa"
+
+
+
+# =====================================================
 # DEPLOY STAGING
 # =====================================================
 - stage: Deploy_Staging
