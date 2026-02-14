@@ -63,7 +63,12 @@ stages:
           - powershell: |
               $dacpac = Get-ChildItem "$(Pipeline.Workspace)\drop" -Recurse -Filter "*.dacpac" | Select-Object -First 1
               if (-not $dacpac) { throw "No .dacpac found in artifact." }
-              
+
+              Write-Host "Using DACPAC: $($dacpac.FullName)"
+
+              # ----------------------------
+              # 1) Generate Deploy Report
+              # ----------------------------
               $reportPath = "$(Pipeline.Workspace)\deploy-report-dev.xml"
 
               SqlPackage `
@@ -75,7 +80,14 @@ stages:
                 /TargetPassword:"$env:SQL_SA_PASSWORD" `
                 /TargetEncryptConnection:True `
                 /TargetTrustServerCertificate:True `
-                /OutputPath:"$reportPath" `
+                /OutputPath:"$reportPath"
+
+              Write-Host "Deploy report generated: $reportPath"
+
+              # ----------------------------
+              # 2) Publish DACPAC
+              # ----------------------------
+              SqlPackage `
                 /Action:Publish `
                 /SourceFile:"$($dacpac.FullName)" `
                 /TargetServerName:"$(DevServer)" `
