@@ -65,6 +65,15 @@ stages:
               if (-not $dacpac) { throw "No .dacpac found in artifact." }
 
               SqlPackage `
+                /Action:DeployReport `
+                /SourceFile:"$($dacpac.FullName)" `
+                /TargetServerName:"$(DevServer)" `
+                /TargetDatabaseName:"$(TargetDatabaseName)" `
+                /TargetUser:"$(SqlUser)" `
+                /TargetPassword:"$env:SQL_SA_PASSWORD" `
+                /TargetEncryptConnection:True `
+                /TargetTrustServerCertificate:True `
+                /OutputPath:"$reportPath"
                 /Action:Publish `
                 /SourceFile:"$($dacpac.FullName)" `
                 /TargetServerName:"$(DevServer)" `
