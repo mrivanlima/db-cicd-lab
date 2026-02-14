@@ -63,6 +63,8 @@ stages:
           - powershell: |
               $dacpac = Get-ChildItem "$(Pipeline.Workspace)\drop" -Recurse -Filter "*.dacpac" | Select-Object -First 1
               if (-not $dacpac) { throw "No .dacpac found in artifact." }
+              
+              $reportPath = "$(Pipeline.Workspace)\deploy-report-dev.xml"
 
               SqlPackage `
                 /Action:DeployReport `
