@@ -2,14 +2,25 @@ trigger:
 - main
 
 variables:
-  TargetDatabaseName: "AppDb"
+- group: vg-sql-cicd-secrets
 
-  DevServer: "localhost,14331"
-  QaServer: "localhost,14332"
-  StagingServer: "localhost,14333"
-  ProdServer: "localhost,14334"
+- name: TargetDatabaseName
+  value: "AppDb"
 
-  SqlUser: "sa"
+- name: DevServer
+  value: "localhost,14331"
+
+- name: QaServer
+  value: "localhost,14332"
+
+- name: StagingServer
+  value: "localhost,14333"
+
+- name: ProdServer
+  value: "localhost,14334"
+
+- name: SqlUser
+  value: "sa"
 
 stages:
 
@@ -172,7 +183,7 @@ stages:
 # =====================================================
 - stage: Drift_QA
   displayName: "Drift Detection (QA vs DACPAC)"
-  dependsOn: Deploy_QA
+  dependsOn: Drift_QA
   jobs:
   - job: DriftCheckQa
     displayName: "Detect drift in QA"
@@ -319,6 +330,9 @@ stages:
                 /TargetEncryptConnection:True `
                 /TargetTrustServerCertificate:True `
                 /OutputPath:"$reportPath"
+
+              if (-not (Test-Path $reportPath)) { throw "Deploy report was not generated: $reportPath" }
+              Write-Host "Deploy report generated: $reportPath"
 
               SqlPackage `
                 /Action:Publish `
