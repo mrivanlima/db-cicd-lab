@@ -71,10 +71,10 @@ stages:
                 /TargetDatabaseName:"$(TargetDatabaseName)" `
                 /TargetUser:"$(SqlUser)" `
                 /TargetPassword:"$env:SQL_SA_PASSWORD" `
+                /TargetEncryptConnection:True `
+                /TargetTrustServerCertificate:True `
                 /p:BlockOnPossibleDataLoss=True `
-                /p:VerifyDeployment=True 
-                /p:Encrypt=True `
-                /p:TrustServerCertificate=True
+                /p:VerifyDeployment=True
             displayName: "Deploy Dev (Safe Mode)"
 
 # =====================================================
@@ -107,10 +107,10 @@ stages:
                 /TargetDatabaseName:"$(TargetDatabaseName)" `
                 /TargetUser:"$(SqlUser)" `
                 /TargetPassword:"$env:SQL_SA_PASSWORD" `
+                /TargetEncryptConnection:True `
+                /TargetTrustServerCertificate:True `
                 /p:BlockOnPossibleDataLoss=True `
-                /p:VerifyDeployment=True `
-                /p:Encrypt=True `
-                /p:TrustServerCertificate=True
+                /p:VerifyDeployment=True
             displayName: "Deploy QA (Safe Mode)"
 
 # =====================================================
@@ -143,10 +143,10 @@ stages:
                 /TargetDatabaseName:"$(TargetDatabaseName)" `
                 /TargetUser:"$(SqlUser)" `
                 /TargetPassword:"$env:SQL_SA_PASSWORD" `
+                /TargetEncryptConnection:True `
+                /TargetTrustServerCertificate:True `
                 /p:BlockOnPossibleDataLoss=True `
-                /p:VerifyDeployment=True `
-                /p:Encrypt=True `
-                /p:TrustServerCertificate=True
+                /p:VerifyDeployment=True
             displayName: "Deploy Staging (Safe Mode)"
 
 # =====================================================
@@ -179,8 +179,8 @@ stages:
                 /TargetDatabaseName:"$(TargetDatabaseName)" `
                 /TargetUser:"$(SqlUser)" `
                 /TargetPassword:"$env:SQL_SA_PASSWORD" `
+                /TargetEncryptConnection:True `
+                /TargetTrustServerCertificate:True `
                 /p:BlockOnPossibleDataLoss=True `
-                /p:VerifyDeployment=True `
-                /p:Encrypt=True `
-                /p:TrustServerCertificate=True
+                /p:VerifyDeployment=True
             displayName: "Deploy Prod (Safe Mode)"
