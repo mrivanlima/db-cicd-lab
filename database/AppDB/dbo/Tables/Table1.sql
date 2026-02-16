@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[Table1]
 (
 	[Id] INT NOT NULL PRIMARY KEY,
-	myvarchar varchar(200)
+	myvarchar varchar(200), 
+    [bc] TIMESTAMP NULL
 )
