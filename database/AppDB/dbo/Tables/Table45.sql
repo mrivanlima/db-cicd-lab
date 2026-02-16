@@ -1,5 +1,0 @@
-﻿CREATE TABLE [dbo].[Table45]
-(
-	[Id] INT NOT NULL PRIMARY KEY,
-	string45 NVARCHAR(255) NOT NULL
-)
