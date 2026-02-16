@@ -450,5 +450,7 @@ This repository demonstrates enterprise-level database DevOps practices includin
 > The SSDT project in Git is the authority.  
 > The database is a deployed artifact.  
 > The pipeline is the enforcement mechanism.
+>
+> Test PR
 
 
