@@ -1,10 +1,8 @@
-﻿CREATE TABLE [dbo].[Users]
-(
-    [UserId] INT NOT NULL,
-    [Email] NVARCHAR(255) NOT NULL,
-    [CreatedAt] DATETIME2 NOT NULL CONSTRAINT DF_Users_CreatedAt DEFAULT (SYSDATETIME()),
-    [MyColumn] int,
-    [AnotherColumn] int,
-    [AnotherColumn2] int
-    CONSTRAINT PK_Users PRIMARY KEY CLUSTERED ([UserId])
+﻿CREATE TABLE [dbo].[Users] (
+    [UserId]    INT            NOT NULL,
+    [Email]     NVARCHAR (255) NOT NULL,
+    [CreatedAt] DATETIME2 (7)  CONSTRAINT [DF_Users_CreatedAt] DEFAULT (sysdatetime()) NOT NULL,
+    [MyColumn]  INT            NULL,
+    CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED ([UserId] ASC)
 );
+
