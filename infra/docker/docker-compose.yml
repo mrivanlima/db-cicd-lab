@@ -4,7 +4,7 @@ services:
     container_name: sql-dev
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+      MSSQL_SA_PASSWORD: "${SQL_SA_PASSWORD_DEV}"
     ports:
       - "14331:1433"
     networks:
@@ -15,7 +15,7 @@ services:
     container_name: sql-qa
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+      MSSQL_SA_PASSWORD: "${SQL_SA_PASSWORD_QA}"
     ports:
       - "14332:1433"
     networks:
@@ -26,7 +26,7 @@ services:
     container_name: sql-staging
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+      MSSQL_SA_PASSWORD: "${SQL_SA_PASSWORD_STAGING}"
     ports:
       - "14333:1433"
     networks:
@@ -37,7 +37,7 @@ services:
     container_name: sql-prod
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+      MSSQL_SA_PASSWORD: "${SQL_SA_PASSWORD_PROD}"
     ports:
       - "14334:1433"
     networks:
