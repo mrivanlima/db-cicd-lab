@@ -110,7 +110,7 @@ stages:
                 /p:VerifyDeployment=True
             displayName: "Deploy Dev (Safe Mode)"
             env:
-              SQL_SA_PASSWORD: $(SQL_SA_PASSWORD)
+              SQL_SA_PASSWORD: $(SQL_SA_PASSWORD_DEV)
 
           - task: PublishPipelineArtifact@1
             displayName: "Publish Dev deploy report"
@@ -170,7 +170,7 @@ stages:
                 /p:VerifyDeployment=True
             displayName: "Deploy QA (Safe Mode)"
             env:
-              SQL_SA_PASSWORD: $(SQL_SA_PASSWORD)
+              SQL_SA_PASSWORD: $(SQL_SA_PASSWORD_QA)
 
           - task: PublishPipelineArtifact@1
             displayName: "Publish QA deploy report"
@@ -225,7 +225,7 @@ stages:
         Write-Host "No drift detected in QA."
       displayName: "Drift check (QA)"
       env:
-        SQL_SA_PASSWORD: $(SQL_SA_PASSWORD)
+        SQL_SA_PASSWORD: $(SQL_SA_PASSWORD_QA)
 
     - task: PublishPipelineArtifact@1
       displayName: "Publish QA drift report"
@@ -287,7 +287,7 @@ stages:
                 /p:VerifyDeployment=True
             displayName: "Deploy Staging (Safe Mode)"
             env:
-              SQL_SA_PASSWORD: $(SQL_SA_PASSWORD)
+              SQL_SA_PASSWORD: $(SQL_SA_PASSWORD_STAGING)
 
           - task: PublishPipelineArtifact@1
             displayName: "Publish Staging deploy report"
@@ -347,7 +347,7 @@ stages:
                 /p:VerifyDeployment=True
             displayName: "Deploy Prod (Safe Mode)"
             env:
-              SQL_SA_PASSWORD: $(SQL_SA_PASSWORD)
+              SQL_SA_PASSWORD: $(SQL_SA_PASSWORD_PROD)
 
           - task: PublishPipelineArtifact@1
             displayName: "Publish Prod deploy report"
