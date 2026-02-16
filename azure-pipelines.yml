@@ -42,16 +42,32 @@ stages:
     - task: VSBuild@1
       displayName: "Build SQL Project (.sqlproj)"
       inputs:
-        solution: "database/**/*.sqlproj"
+        solution: "database/AppDb.Database/AppDb.Database.sqlproj"
+        # solution: "database/**/*.sqlproj"
         vsVersion: "latest"
         configuration: "Release"
 
-    - task: PublishBuildArtifacts@1
-      displayName: "Publish DACPAC Artifact"
+    - task: CopyFiles@2
+      displayName: "Stage DACPAC into artifact folder"
       inputs:
-        PathtoPublish: "database"
-        ArtifactName: "drop"
-        publishLocation: "Container"
+        SourceFolder: '$(Build.SourcesDirectory)'
+        Contents: |
+          **\bin\Release\*.dacpac
+        TargetFolder: '$(Build.ArtifactStagingDirectory)\drop'
+        flattenFolders: true
+
+    - task: PublishPipelineArtifact@1
+      displayName: "Publish DACPAC pipeline artifact"
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)\drop'
+        artifact: 'drop'
+
+    # - task: PublishBuildArtifacts@1
+    #   displayName: "Publish DACPAC Artifact"
+    #   inputs:
+    #     PathtoPublish: "database"
+    #     ArtifactName: "drop"
+    #     publishLocation: "Container"
 
 # =====================================================
 # DEPLOY DEV
