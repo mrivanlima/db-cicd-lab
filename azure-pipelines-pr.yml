@@ -1,0 +1,28 @@
+trigger: none
+
+pr:
+  branches:
+    include:
+    - main
+
+variables:
+- group: vg-sql-cicd-secrets
+
+pool:
+  name: pool-local-docker
+
+stages:
+- stage: Build
+  displayName: "PR Validation - Build DACPAC"
+  jobs:
+  - job: BuildDacpac
+    displayName: "Compile SQL Database Project"
+    steps:
+    - checkout: self
+
+    - task: VSBuild@1
+      displayName: "Build SQL Project (.sqlproj)"
+      inputs:
+        solution: "database/**/*.sqlproj"
+        vsVersion: "latest"
+        configuration: "Release"

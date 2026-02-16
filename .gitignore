@@ -24,3 +24,7 @@
 # OS
 Thumbs.db
 .DS_Store
+
+# Local environment variable files (not checked in to source control)
+infra/docker/.env
+
