@@ -5,9 +5,6 @@ pr:
     include:
     - main
 
-variables:
-- group: vg-sql-cicd-secrets
-
 pool:
   name: pool-local-docker
 
