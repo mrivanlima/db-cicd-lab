@@ -42,8 +42,8 @@ stages:
     - task: VSBuild@1
       displayName: "Build SQL Project (.sqlproj)"
       inputs:
-        solution: "database/AppDb.Database/AppDb.Database.sqlproj"
-        # solution: "database/**/*.sqlproj"
+        #solution: "database/AppDb.Database/AppDb.Database.sqlproj"
+        solution: "database/**/*.sqlproj"
         vsVersion: "latest"
         configuration: "Release"
 
