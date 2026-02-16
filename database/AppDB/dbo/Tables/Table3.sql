@@ -1,5 +1,0 @@
-﻿CREATE TABLE [dbo].[Table3]
-(
-	[Id] INT identity NOT NULL PRIMARY KEY,
-	string1 NVARCHAR(255) NOT NULL
-)
