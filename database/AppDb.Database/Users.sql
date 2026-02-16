@@ -5,5 +5,6 @@
     [CreatedAt] DATETIME2 NOT NULL CONSTRAINT DF_Users_CreatedAt DEFAULT (SYSDATETIME()),
     [MyColumn] int,
     [AnotherColumn] int,
+    [AnotherColumn2] int
     CONSTRAINT PK_Users PRIMARY KEY CLUSTERED ([UserId])
 );
